@@ -1,0 +1,20 @@
+/* /Layout/MainLayout.razor.rz.scp.css */
+/* /Layout/NavMenu.razor.rz.scp.css */
+/* /Pages/Home.razor.rz.scp.css */
+.cell[b-ne24yv1deb] {
+    width: 150px;
+    height: 150px;
+    font-size: 50px;
+    border: 5px solid #000000;
+    align-content: center;
+    text-align: center;
+    margin: -3.5px;
+    font-size: 40px;
+    font-weight: bold;
+    color: white;
+    border-color: black;
+}
+
+.board[b-ne24yv1deb] {
+    margin: 100px;
+}

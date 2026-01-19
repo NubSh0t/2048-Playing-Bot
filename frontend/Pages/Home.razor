@@ -1,0 +1,223 @@
+﻿@page "/"
+@using System.Reflection.Metadata
+@using System.ComponentModel
+
+<PageTitle>2048 bot</PageTitle>
+
+<table class="board">
+@for (int i = 0; i < 4; i++)
+{
+    <tr >
+    @for (int j = 0; j < 4; j++)
+    {
+        <td>
+            <p class="cell" style="background-color: rgb(@(b.grid[i,j]*5+60),30,@(b.grid[i,j]*10+40))">@((b.grid[i,j]>0) ? Math.Pow(2,b.grid[i, j]) : "")</p>
+        </td>
+    }
+    </tr>
+}
+</table>
+
+@code {
+
+    int FPS = 30;
+    int TPS = 10;
+
+    class Board
+    {
+        public int[,] grid;
+        public Board()
+        {
+            grid=new int[4, 4];
+        }
+
+        private List<(int, int)> emptyCells()
+        {
+            List<(int, int)> empty = new List<(int, int)>();
+
+            for (int i = 0; i < 4; i++)
+                for (int j = 0; j < 4; j++)
+                    if (grid[i, j] == 0)
+                        empty.Add((i, j));
+
+            return empty;
+        }
+
+        public void addRandomTile()
+        {
+            List<(int, int)> empty = emptyCells();
+            if (empty.Count == 0)
+                return;
+
+            Random rand = new Random();
+            var (i, j) = empty[rand.Next(empty.Count)];
+            grid[i, j] = (rand.NextDouble() < 0.9) ? 1 : 2; // 90% chance of 2, 10% chance of 4
+        }
+        public bool doMoveUp()
+        {
+            bool moved = false;
+
+            for (int j=0; j<4; j++)
+            {
+                int i=1;
+                while (i<4){
+                    if(grid[i,j]==grid[i-1,j] && grid[i,j]!=0){
+                        grid[i-1,j]+=1;
+                        grid[i,j]=0;
+                        i=1;
+                        moved=true;
+                    }            
+                    else if(grid[i-1,j]==0 && grid[i,j]!=0){
+                        grid[i-1,j]=grid[i,j];
+                        grid[i,j]=0;
+                        i=1;
+                        moved=true;
+                    }
+                    else{
+                        i+=1;
+                    }
+
+                }
+            }
+
+            if(moved){
+                addRandomTile();
+            }
+
+            return moved;
+        }
+
+        public bool doMoveDown()
+        {
+            bool moved = false;
+
+            for (int j=0; j<4; j++)
+            {
+                int i=2;
+                while (i>=0){
+                    if(grid[i,j]==grid[i+1,j] && grid[i,j]!=0){
+                        grid[i+1,j]+=1;
+                        grid[i,j]=0;
+                        i=2;
+                        moved=true;
+                    }            
+                    else if(grid[i+1,j]==0 && grid[i,j]!=0){
+                        grid[i+1,j]=grid[i,j];
+                        grid[i,j]=0;
+                        i=2;
+                        moved=true;
+                    }
+                    else{
+                        i-=1;
+                    }
+
+                }
+            }
+
+            if(moved){
+                addRandomTile();
+            }
+
+            return moved;
+
+        }
+
+        public bool doMoveLeft()
+        {
+            bool moved = false;
+
+            for (int i=0; i<4; i++)
+            {
+                int j=1;
+                while (j<4){
+                    if(grid[i,j]==grid[i,j-1] && grid[i,j]!=0){
+                        grid[i,j-1]+=1;
+                        grid[i,j]=0;
+                        j=1;
+                        moved=true;
+                    }            
+                    else if(grid[i,j-1]==0 && grid[i,j]!=0){
+                        grid[i,j-1]=grid[i,j];
+                        grid[i,j]=0;
+                        j=1;
+                        moved=true;
+                    }
+                    else{
+                        j+=1;
+                    }
+
+                }
+            }
+
+            if(moved){
+                addRandomTile();
+            }
+
+            return moved;
+        }
+
+        public bool doMoveRight()
+        {
+            bool moved = false;
+
+            for (int i=0; i<4; i++)
+            {
+                int j=2;
+                while (j>=0){
+                    if(grid[i,j]==grid[i,j+1] && grid[i,j]!=0){
+                        grid[i,j+1]+=1;
+                        grid[i,j]=0;
+                        j=2;
+                        moved=true;
+                    }            
+                    else if(grid[i,j+1]==0 && grid[i,j]!=0){
+                        grid[i,j+1]=grid[i,j];
+                        grid[i,j]=0;
+                        j=2;
+                        moved=true;
+                    }
+                    else{
+                        j-=1;
+                    }
+
+                }
+            }
+
+            if(moved){
+                addRandomTile();
+            }
+
+            return moved;
+        }
+
+    }
+
+    Board? b;
+    Timer? gameTimer;
+    Timer? updateTimer;
+
+    protected override void OnInitialized()
+    {
+        b = new Board();
+        b.addRandomTile();
+        b.addRandomTile();
+
+        int updateInterval = 1000 / FPS;
+        int gameInterval = 1000 / TPS;
+
+        updateTimer ??= new Timer(UpdateLoop,null,0,updateInterval);
+        gameTimer ??= new Timer(GameLoop,null,0,gameInterval);
+
+    }
+
+    public void UpdateLoop(object? state)
+    {
+        InvokeAsync(StateHasChanged);
+    }
+
+    public void GameLoop(object? state)
+    {
+        
+    }
+
+}
