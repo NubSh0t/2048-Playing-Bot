@@ -23,13 +23,31 @@
     int FPS = 30;
     int TPS = 10;
 
+    enum moveType{
+        Left,
+        Right,
+        Up,
+        Down
+
+    }
+
+    struct move{
+        public ulong key;
+        public moveType direction;
+    }
+
     class Board
     {
         public int[,] grid;
+
+        List<move> moveList;
+
         public Board()
         {
             grid=new int[4, 4];
+            moveList=new List<move>();
         }
+            
 
         private List<(int, int)> emptyCells()
         {
@@ -51,145 +69,163 @@
 
             Random rand = new Random();
             var (i, j) = empty[rand.Next(empty.Count)];
-            grid[i, j] = (rand.NextDouble() < 0.9) ? 1 : 2; // 90% chance of 2, 10% chance of 4
+            grid[i, j] = (rand.NextDouble() < 0.9) ? 1 : 2;
         }
-        public bool doMoveUp()
+        public bool doMove(moveType dir)
         {
             bool moved = false;
+            move m;
+            m.key=toKey();
+            m.direction=dir;
 
-            for (int j=0; j<4; j++)
+            if (dir== moveType.Up)
             {
-                int i=1;
-                while (i<4){
-                    if(grid[i,j]==grid[i-1,j] && grid[i,j]!=0){
-                        grid[i-1,j]+=1;
-                        grid[i,j]=0;
-                        i=1;
-                        moved=true;
-                    }            
-                    else if(grid[i-1,j]==0 && grid[i,j]!=0){
-                        grid[i-1,j]=grid[i,j];
-                        grid[i,j]=0;
-                        i=1;
-                        moved=true;
-                    }
-                    else{
-                        i+=1;
-                    }
+                for (int j=0; j<4; j++)
+                {
+                    int i=1;
+                    while (i<4){
+                        if(grid[i,j]==grid[i-1,j] && grid[i,j]!=0){
+                            grid[i-1,j]+=1;
+                            grid[i,j]=0;
+                            i=1;
+                            moved=true;
+                        }            
+                        else if(grid[i-1,j]==0 && grid[i,j]!=0){
+                            grid[i-1,j]=grid[i,j];
+                            grid[i,j]=0;
+                            i=1;
+                            moved=true;
+                        }
+                        else{
+                            i+=1;
+                        }
 
+                    }
+                }
+            }
+            else if (dir==moveType.Down)
+            {
+                for (int j=0; j<4; j++)
+                {
+                    int i=2;
+                    while (i>=0){
+                        if(grid[i,j]==grid[i+1,j] && grid[i,j]!=0){
+                            grid[i+1,j]+=1;
+                            grid[i,j]=0;
+                            i=2;
+                            moved=true;
+                        }            
+                        else if(grid[i+1,j]==0 && grid[i,j]!=0){
+                            grid[i+1,j]=grid[i,j];
+                            grid[i,j]=0;
+                            i=2;
+                            moved=true;
+                        }
+                        else{
+                            i-=1;
+                        }
+
+                    }
+                }
+            }
+            else if (dir==moveType.Left)
+            {
+                for (int i=0; i<4; i++)
+                {
+                    int j=1;
+                    while (j<4){
+                        if(grid[i,j]==grid[i,j-1] && grid[i,j]!=0){
+                            grid[i,j-1]+=1;
+                            grid[i,j]=0;
+                            j=1;
+                            moved=true;
+                        }            
+                        else if(grid[i,j-1]==0 && grid[i,j]!=0){
+                            grid[i,j-1]=grid[i,j];
+                            grid[i,j]=0;
+                            j=1;
+                            moved=true;
+                        }
+                        else{
+                            j+=1;
+                        }
+
+                    }
+                }
+            }
+            else if (dir==moveType.Right)
+            {
+                for (int i=0; i<4; i++)
+                {
+                    int j=2;
+                    while (j>=0){
+                        if(grid[i,j]==grid[i,j+1] && grid[i,j]!=0){
+                            grid[i,j+1]+=1;
+                            grid[i,j]=0;
+                            j=2;
+                            moved=true;
+                        }            
+                        else if(grid[i,j+1]==0 && grid[i,j]!=0){
+                            grid[i,j+1]=grid[i,j];
+                            grid[i,j]=0;
+                            j=2;
+                            moved=true;
+                        }
+                        else{
+                            j-=1;
+                        }
+
+                    }
                 }
             }
 
-            if(moved){
-                addRandomTile();
+            if (moved){
+                moveList.Add(m);
             }
 
             return moved;
         }
 
-        public bool doMoveDown()
-        {
-            bool moved = false;
 
-            for (int j=0; j<4; j++)
-            {
-                int i=2;
-                while (i>=0){
-                    if(grid[i,j]==grid[i+1,j] && grid[i,j]!=0){
-                        grid[i+1,j]+=1;
-                        grid[i,j]=0;
-                        i=2;
-                        moved=true;
-                    }            
-                    else if(grid[i+1,j]==0 && grid[i,j]!=0){
-                        grid[i+1,j]=grid[i,j];
-                        grid[i,j]=0;
-                        i=2;
-                        moved=true;
-                    }
-                    else{
-                        i-=1;
-                    }
+        private ulong toKey(){
+            ulong key = 0;
+            int shift = 0;
 
+            for (int i = 0; i < 4; i++)
+                for (int j = 0; j < 4; j++)
+                {
+                    key |= ((ulong)grid[i, j] & 0xF) << shift;
+                    shift += 4;
                 }
-            }
 
-            if(moved){
-                addRandomTile();
-            }
-
-            return moved;
-
+            return key;
         }
 
-        public bool doMoveLeft()
-        {
-            bool moved = false;
+        private void loadBoard(ulong key){
+            int shift = 0;
 
-            for (int i=0; i<4; i++)
-            {
-                int j=1;
-                while (j<4){
-                    if(grid[i,j]==grid[i,j-1] && grid[i,j]!=0){
-                        grid[i,j-1]+=1;
-                        grid[i,j]=0;
-                        j=1;
-                        moved=true;
-                    }            
-                    else if(grid[i,j-1]==0 && grid[i,j]!=0){
-                        grid[i,j-1]=grid[i,j];
-                        grid[i,j]=0;
-                        j=1;
-                        moved=true;
-                    }
-                    else{
-                        j+=1;
-                    }
-
+            for (int i = 0; i < 4; i++){
+                for (int j = 0; j < 4; j++)
+                {
+                    grid[i, j] = (int)((key >> shift) & 0xF);
+                    shift += 4;
                 }
             }
-
-            if(moved){
-                addRandomTile();
-            }
-
-            return moved;
         }
 
-        public bool doMoveRight()
-        {
-            bool moved = false;
 
-            for (int i=0; i<4; i++)
-            {
-                int j=2;
-                while (j>=0){
-                    if(grid[i,j]==grid[i,j+1] && grid[i,j]!=0){
-                        grid[i,j+1]+=1;
-                        grid[i,j]=0;
-                        j=2;
-                        moved=true;
-                    }            
-                    else if(grid[i,j+1]==0 && grid[i,j]!=0){
-                        grid[i,j+1]=grid[i,j];
-                        grid[i,j]=0;
-                        j=2;
-                        moved=true;
-                    }
-                    else{
-                        j-=1;
-                    }
+        private double evaluateBoard(){
+            double score=0;
 
+            for (int i=0;i<4;i++){
+                for (int j=0;j<4;j++){
+                    if (grid[i,j]>0){
+                        score+=Math.Pow(2,grid[i,j]);
+                    }
                 }
             }
-
-            if(moved){
-                addRandomTile();
-            }
-
-            return moved;
+            return score;
         }
-
     }
 
     Board? b;
@@ -217,7 +253,6 @@
 
     public void GameLoop(object? state)
     {
-        
     }
 
 }

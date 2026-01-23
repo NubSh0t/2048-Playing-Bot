@@ -1847,11 +1847,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\1amma\\GitHub\\2048-playing-bot\\frontend\\frontend.csproj",
+      "projectUniqueName": "C:\\Users\\1amma\\GitHub\\2048-Playing-Bot\\frontend\\frontend.csproj",
       "projectName": "frontend",
-      "projectPath": "C:\\Users\\1amma\\GitHub\\2048-playing-bot\\frontend\\frontend.csproj",
+      "projectPath": "C:\\Users\\1amma\\GitHub\\2048-Playing-Bot\\frontend\\frontend.csproj",
       "packagesPath": "C:\\Users\\1amma\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\1amma\\GitHub\\2048-playing-bot\\frontend\\obj\\",
+      "outputPath": "C:\\Users\\1amma\\GitHub\\2048-Playing-Bot\\frontend\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\1amma\\AppData\\Roaming\\NuGet\\NuGet.Config"
@@ -1935,5 +1935,13 @@
         "#import": []
       }
     }
-  }
+  },
+  "logs": [
+    {
+      "code": "NU1900",
+      "level": "Warning",
+      "warningLevel": 1,
+      "message": "Error occurred while getting package vulnerability data: Unable to load the service index for source https://api.nuget.org/v3/index.json."
+    }
+  ]
 }
