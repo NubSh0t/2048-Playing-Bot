@@ -14,7 +14,19 @@
 
 .board {
     position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    transform: translate(100px,100px);
+}
+
+.debug {
+    position: absolute;
+    transform: translate(700px,100px);
+}
+
+.title {
+    font-weight: bold;
+    font-size: larger;
+}
+
+.text {
+    margin: 0.2em;
 }

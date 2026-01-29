@@ -17,7 +17,19 @@
 
 .board[b-ne24yv1deb] {
     position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    transform: translate(100px,100px);
+}
+
+.debug[b-ne24yv1deb] {
+    position: absolute;
+    transform: translate(700px,100px);
+}
+
+.title[b-ne24yv1deb] {
+    font-weight: bold;
+    font-size: larger;
+}
+
+.text[b-ne24yv1deb] {
+    margin: 0.2em;
 }
