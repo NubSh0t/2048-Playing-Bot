@@ -22,15 +22,15 @@
 </table>
 <div class="debug">
     <h6 class="title">Debugging Screen</h6>
-    <p class="text">Score: @(b.scoreBoard())</p>
+    <p class="text">Score: @(b.Score())</p>
     <p class="text">Time per tick: @(sw.ElapsedMilliseconds)ms</p>
 </div>
 
 
 @code {
 
-    int FPS = 30;
-    int TPS = 60;
+    int FPS = 60;
+    int TPS = 10;
 
     Board? b;
     Timer? gameTimer;
@@ -41,8 +41,8 @@
     protected override void OnInitialized()
     {
         b = new Board();
-        b.addRandomTile();
-        b.addRandomTile();
+        b.AddRandomTile();
+        b.AddRandomTile();
 
         int updateInterval = 1000 / FPS;
         int gameInterval = 1000 / TPS;
@@ -61,7 +61,7 @@
     {
         sw.Reset();
         sw.Start();
-        b.tick();
+        b.Tick();
         sw.Stop();
     }
 
